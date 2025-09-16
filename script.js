@@ -3,6 +3,7 @@ class BookmarkDashboard {
         this.bookmarks = this.loadBookmarks();
         this.categories = this.loadCategories();
         this.currentFilter = 'all';
+        this.searchQuery = '';
         this.init();
     }
 
@@ -64,6 +65,15 @@ class BookmarkDashboard {
 
         document.getElementById('categoryName').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.addCategory();
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            this.searchBookmarks(e.target.value);
+        });
+
+        document.getElementById('clearSearchBtn').addEventListener('click', () => {
+            this.clearSearch();
         });
     }
 
@@ -258,11 +268,41 @@ class BookmarkDashboard {
         this.renderBookmarks();
     }
 
+    searchBookmarks(query) {
+        this.searchQuery = query.toLowerCase().trim();
+        
+        // Show/hide clear button
+        const clearBtn = document.getElementById('clearSearchBtn');
+        if (this.searchQuery) {
+            clearBtn.style.display = 'inline-flex';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+
+        this.renderBookmarks();
+    }
+
+    clearSearch() {
+        document.getElementById('searchInput').value = '';
+        this.searchQuery = '';
+        document.getElementById('clearSearchBtn').style.display = 'none';
+        this.renderBookmarks();
+    }
+
     renderBookmarks() {
         const grid = document.getElementById('bookmarksGrid');
-        const filteredBookmarks = this.currentFilter === 'all' 
+        let filteredBookmarks = this.currentFilter === 'all' 
             ? this.bookmarks 
             : this.bookmarks.filter(bookmark => bookmark.category === this.currentFilter);
+
+        // Apply search filter if there's a search query
+        if (this.searchQuery) {
+            filteredBookmarks = filteredBookmarks.filter(bookmark => 
+                bookmark.name.toLowerCase().includes(this.searchQuery) ||
+                bookmark.url.toLowerCase().includes(this.searchQuery) ||
+                bookmark.category.toLowerCase().includes(this.searchQuery)
+            );
+        }
 
         if (filteredBookmarks.length === 0) {
             grid.innerHTML = '';
@@ -306,14 +346,20 @@ class BookmarkDashboard {
 
     updateEmptyState() {
         const emptyState = document.getElementById('emptyState');
-        const hasBookmarks = this.bookmarks.length > 0;
-        
-        if (this.currentFilter === 'all') {
-            emptyState.style.display = hasBookmarks ? 'none' : 'block';
-        } else {
-            const filteredBookmarks = this.bookmarks.filter(bookmark => bookmark.category === this.currentFilter);
-            emptyState.style.display = filteredBookmarks.length > 0 ? 'none' : 'block';
+        let filteredBookmarks = this.currentFilter === 'all' 
+            ? this.bookmarks 
+            : this.bookmarks.filter(bookmark => bookmark.category === this.currentFilter);
+
+        // Apply search filter if there's a search query
+        if (this.searchQuery) {
+            filteredBookmarks = filteredBookmarks.filter(bookmark => 
+                bookmark.name.toLowerCase().includes(this.searchQuery) ||
+                bookmark.url.toLowerCase().includes(this.searchQuery) ||
+                bookmark.category.toLowerCase().includes(this.searchQuery)
+            );
         }
+
+        emptyState.style.display = filteredBookmarks.length > 0 ? 'none' : 'block';
     }
 
     clearForm() {

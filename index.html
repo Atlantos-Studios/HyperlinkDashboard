@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Web Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -37,6 +38,16 @@
                     <option value="tools">Tools</option>
                 </select>
                 <button id="addBookmarkBtn"><i class="fas fa-plus"></i> Add</button>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search bookmarks..." class="search-input">
+                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
 
