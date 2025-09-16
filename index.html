@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="bookmarks">
+                <i class="fas fa-bookmark"></i> Bookmarks
+            </button>
+            <button class="tab-btn" data-tab="categories">
+                <i class="fas fa-tags"></i> Categories
+            </button>
+            <button class="tab-btn" data-tab="import-export">
+                <i class="fas fa-download"></i> Import/Export
+            </button>
+        </div>
+
+        <!-- Bookmarks Tab -->
+        <div class="tab-content active" id="bookmarks-tab">
+        <div class="add-bookmark-section">
+            <div class="add-form">
+                <input type="text" id="bookmarkName" placeholder="Website name" required>
+                <input type="url" id="bookmarkUrl" placeholder="https://example.com" required>
+                <select id="bookmarkCategory">
+                    <option value="general">General</option>
+                    <option value="work">Work</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="news">News</option>
+                    <option value="tools">Tools</option>
+                </select>
+                <button id="addBookmarkBtn"><i class="fas fa-plus"></i> Add</button>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="general">General</button>
+            <button class="filter-btn" data-category="work">Work</button>
+            <button class="filter-btn" data-category="entertainment">Entertainment</button>
+            <button class="filter-btn" data-category="shopping">Shopping</button>
+            <button class="filter-btn" data-category="news">News</button>
+            <button class="filter-btn" data-category="tools">Tools</button>
+        </div>
+
+        <main class="bookmarks-grid" id="bookmarksGrid">
+            <!-- Bookmarks will be dynamically inserted here -->
+        </main>
+
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-bookmark"></i>
+            <h3>No bookmarks yet</h3>
+            <p>Add your first favorite website!</p>
+        </div>
+        </div>
+
+        <!-- Categories Tab -->
+        <div class="tab-content" id="categories-tab">
+            <div class="categories-section">
+                <div class="add-category-section">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Category</h3>
+                    <div class="add-category-form">
+                        <input type="text" id="categoryName" placeholder="Category name" required>
+                        <input type="color" id="categoryColor" value="#8b5cf6" title="Category color">
+                        <button id="addCategoryBtn" class="action-btn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="categories-list-section">
+                    <h3><i class="fas fa-list"></i> Existing Categories</h3>
+                    <p class="drag-hint"><i class="fas fa-hand-paper"></i> Drag and drop categories to change their order</p>
+                    <div class="categories-grid" id="categoriesGrid">
+                        <!-- Categories will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <div class="category-info">
+                    <h4><i class="fas fa-info-circle"></i> Category Information</h4>
+                    <ul>
+                        <li>Categories can be edited, renamed, or deleted</li>
+                        <li>When deleting a category, all associated bookmarks will be moved to "General"</li>
+                        <li>Each category can have an individual color</li>
+                        <li>The default "General" category cannot be deleted</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import/Export Tab -->
+        <div class="tab-content" id="import-export-tab">
+            <div class="import-export-section">
+                <div class="export-section">
+                    <h3><i class="fas fa-download"></i> Export Complete Backup</h3>
+                    <p>Download all your bookmarks, categories, and settings as a JSON file</p>
+                    <button id="exportBtn" class="action-btn export-btn">
+                        <i class="fas fa-download"></i> Download Complete Dashboard Backup
+                    </button>
+                </div>
+
+                <div class="import-section">
+                    <h3><i class="fas fa-upload"></i> Import Backup</h3>
+                    <p>Upload a complete dashboard backup or just bookmarks from a JSON file</p>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                        <button id="importBtn" class="action-btn import-btn">
+                            <i class="fas fa-upload"></i> Select File
+                        </button>
+                        <span id="fileName" class="file-name"></span>
+                    </div>
+                    <button id="importConfirmBtn" class="action-btn confirm-btn" style="display: none;">
+                        <i class="fas fa-check"></i> Import
+                    </button>
+                </div>
+
+                <div class="backup-info">
+                    <h4><i class="fas fa-info-circle"></i> Backup Information</h4>
+                    <ul>
+                        <li><strong>Complete Backup:</strong> Contains all bookmarks, categories, and settings</li>
+                        <li><strong>Categories:</strong> Intelligently merged (no duplicates)</li>
+                        <li><strong>Bookmarks:</strong> Added to existing ones</li>
+                        <li><strong>Legacy Support:</strong> Old bookmark-only files are still supported</li>
+                        <li><strong>Format:</strong> JSON files with version information</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Confirmations -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Confirmation</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Do you really want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Input Prompts -->
+    <div class="modal-overlay" id="promptOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="promptTitle">Input</h3>
+                <button class="modal-close" id="promptClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="promptMessage">Please enter the new value:</p>
+                <input type="text" id="promptInput" placeholder="New value">
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="promptCancel">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" id="promptConfirm">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Color Selection -->
+    <div class="modal-overlay" id="colorOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="colorTitle">Select Color</h3>
+                <button class="modal-close" id="colorClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="colorMessage">Choose a color for the category:</p>
+                <div class="color-palette">
+                    <div class="color-presets">
+                        <h4>Preset Colors</h4>
+                        <div class="color-grid" id="colorPresets">
+                            <!-- Preset colors will be added here -->
+                        </div>
+                    </div>
+                    <div class="color-custom">
+                        <h4>Custom Color</h4>
+                        <div class="color-input-wrapper">
+                            <input type="color" id="colorPicker" value="#8b5cf6">
+                            <input type="text" id="colorHexInput" placeholder="#8b5cf6" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="color-preview">
+                        <h4>Preview</h4>
+                        <div class="color-preview-box" id="colorPreview">
+                            <div class="color-preview-circle" id="colorPreviewCircle"></div>
+                            <span id="colorPreviewText">Category Name</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="colorCancel">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" id="colorConfirm">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
