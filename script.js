@@ -518,16 +518,9 @@ class BookmarkDashboard {
     }
 
     importCompleteBackup(importedData) {
-        const originalBookmarkCount = this.bookmarks.length;
-        const originalCategoryCount = this.categories.length;
-        
-        // Import categories (merge with existing, avoid duplicates)
-        const existingCategoryIds = this.categories.map(cat => cat.id);
-        const newCategories = importedData.categories.filter(cat => !existingCategoryIds.includes(cat.id));
-        this.categories = [...this.categories, ...newCategories];
-        
-        // Import bookmarks (merge with existing)
-        this.bookmarks = [...this.bookmarks, ...importedData.bookmarks];
+        // Replace all existing data with imported data
+        this.categories = [...importedData.categories];
+        this.bookmarks = [...importedData.bookmarks];
         
         // Save everything
         this.saveCategories();
@@ -540,11 +533,8 @@ class BookmarkDashboard {
         this.updateCategorySelect();
         this.updateFilterButtons();
         
-        const importedBookmarkCount = this.bookmarks.length - originalBookmarkCount;
-        const importedCategoryCount = this.categories.length - originalCategoryCount;
-        
         this.showMessage(
-            `Backup imported successfully! ${importedBookmarkCount} bookmarks, ${importedCategoryCount} categories added.`, 
+            `Backup imported successfully! ${this.bookmarks.length} bookmarks, ${this.categories.length} categories loaded.`, 
             'success'
         );
         
@@ -553,14 +543,13 @@ class BookmarkDashboard {
     }
 
     importLegacyBookmarks(importedBookmarks) {
-        const originalCount = this.bookmarks.length;
-        this.bookmarks = [...this.bookmarks, ...importedBookmarks];
+        // Replace all existing bookmarks with imported bookmarks
+        this.bookmarks = [...importedBookmarks];
         this.saveBookmarks();
         this.renderBookmarks();
         this.updateEmptyState();
         
-        const importedCount = this.bookmarks.length - originalCount;
-        this.showMessage(`${importedCount} bookmarks imported successfully! (Legacy format)`, 'success');
+        this.showMessage(`${this.bookmarks.length} bookmarks imported successfully! (Legacy format)`, 'success');
         
         // Reset import UI
         this.resetImportUI();
