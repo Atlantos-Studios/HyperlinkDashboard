@@ -142,7 +142,7 @@ body {
 .search-container {
     position: relative;
     max-width: 500px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .search-icon {
@@ -207,7 +207,7 @@ body {
     gap: 10px;
     margin-bottom: 30px;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .filter-btn {
